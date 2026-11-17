@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Paper Book Portfolio — 一本可以翻开、拖拽、观看的纸艺立体书个人作品集。" />
+    <title>Paper Book Portfolio · 纸艺作品集</title>
+    <link rel="stylesheet" href="./src/styles.css?v=20261117n" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./public/vendor/three/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <canvas id="scene-canvas" aria-label="纸艺立体书三维场景"></canvas>
+      <div class="grain-overlay" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">PB</span>
+          <span class="brand-text">
+            <strong>Paper Book Portfolio</strong>
+            <small>纸艺立体书作品集 · 2026</small>
+          </span>
+        </div>
+        <div class="topbar-center">
+          <span id="chapter-label">序章 · 01/09</span>
+        </div>
+        <div class="topbar-right">
+          <span class="status-dot"></span>
+          <span id="unit-label">个人介绍</span>
+        </div>
+      </header>
+
+      <button id="cover-prompt" class="cover-prompt" type="button">
+        <span class="prompt-line"></span>
+        <span class="prompt-main">拖拽旋转书本，点击封面翻开</span>
+        <span class="prompt-sub">DRAG TO ROTATE · CLICK TO OPEN</span>
+        <span class="prompt-line"></span>
+      </button>
+
+      <main id="book-ui" class="book-ui" aria-hidden="true">
+        <section id="left-page" class="paper-page page-left" aria-label="作品说明页"></section>
+
+        <section id="stage-viewport" class="stage-viewport" aria-label="中央三维展示区">
+          <div class="stage-frame" aria-hidden="true">
+            <span class="stage-corner top-left"></span>
+            <span class="stage-corner top-right"></span>
+            <span class="stage-corner bottom-left"></span>
+            <span class="stage-corner bottom-right"></span>
+            <span class="stage-label">3D SPACE / INTERACTIVE</span>
+          </div>
+          <div class="stage-sweep" aria-hidden="true"></div>
+          <div id="stage-hint" class="stage-hint">拖拽旋转 · 悬停查看展品 · 点击查看大图</div>
+          <div id="hotspot-tooltip" class="hotspot-tooltip" hidden></div>
+        </section>
+
+        <section id="right-page" class="paper-page page-right" aria-label="作品补充信息页"></section>
+        <div class="page-turn" aria-hidden="true"></div>
+      </main>
+
+      <nav id="control-bar" class="control-bar" aria-label="作品集控制栏">
+        <button id="btn-directory" class="control-button" type="button" aria-expanded="false">
+          <span class="control-glyph">目</span><span class="control-label">目录</span>
+        </button>
+        <span class="control-divider"></span>
+        <button id="btn-prev" class="control-button" type="button">
+          <span class="control-glyph">←</span><span class="control-label">上一项</span>
+        </button>
+        <button id="btn-next" class="control-button" type="button">
+          <span class="control-label">下一项</span><span class="control-glyph">→</span>
+        </button>
+        <span class="control-divider"></span>
+        <button id="btn-audio" class="control-button" type="button" aria-pressed="false">
+          <span class="control-glyph audio-glyph"></span><span class="control-label">氛围音：关</span>
+        </button>
+        <button id="btn-reset" class="control-button" type="button">
+          <span class="control-glyph">◎</span><span class="control-label">视角重置</span>
+        </button>
+      </nav>
+
+      <aside id="directory" class="directory" aria-hidden="true" aria-label="作品目录">
+        <div class="directory-head">
+          <div>
+            <span class="directory-kicker">CONTENTS</span>
+            <h2>目录</h2>
+          </div>
+          <button id="btn-directory-close" class="icon-button" type="button" aria-label="关闭目录">×</button>
+        </div>
+        <div id="directory-list" class="directory-list"></div>
+        <p class="directory-foot">目录 v2 · 按展区浏览，点击即可进入对应展区。</p>
+      </aside>
+
+      <div id="modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-backdrop" data-close-modal></div>
+        <div class="modal-card">
+          <button class="modal-close icon-button" type="button" data-close-modal aria-label="关闭预览">×</button>
+          <div class="modal-media"><img id="modal-image" src="" alt="" /></div>
+          <div class="modal-info">
+            <span class="modal-kicker">ARCHIVE / HIGH RESOLUTION</span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-caption" class="modal-caption"></p>
+            <div id="modal-meta" class="modal-meta"></div>
+            <p id="modal-description" class="modal-description"></p>
+            <div class="modal-foot">点击空白处或按 Esc 关闭</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+        <div class="loading-card">
+          <div class="loading-book"><span></span><span></span></div>
+          <strong>正在装订手册…</strong>
+          <p id="loading-text">加载纸艺模型与作品素材</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="cursor-dot" class="cursor-dot" aria-hidden="true"></div>
+    <div id="cursor-ring" class="cursor-ring" aria-hidden="true">
+      <span id="cursor-label" class="cursor-label"></span>
+    </div>
+
+    <script type="module" src="./src/main.js?v=20261117n"></script>
+  </body>
+</html>
