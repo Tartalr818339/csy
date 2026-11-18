@@ -1,4 +1,4 @@
-import { siteMeta } from './data/units.js?v=20261117n';
+import { siteMeta } from './data/units.js?v=20261118o';
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -56,13 +56,20 @@ export class UI {
     this.cursorRing = document.querySelector('#cursor-ring');
     this.cursorLabel = document.querySelector('#cursor-label');
     this.canvas = document.querySelector('#scene-canvas');
+    this.worksIndex = document.querySelector('#works-index');
     this.cursorTarget = { x: -100, y: -100 };
     this.cursorRingPosition = { x: -100, y: -100 };
     this.onHotspotSelect = null;
+    this.onWorkSelect = null;
 
     this.rightPage?.addEventListener('click', (event) => {
       const button = event.target.closest('[data-hotspot]');
       if (button && this.onHotspotSelect) this.onHotspotSelect(button.dataset.hotspot);
+    });
+
+    this.worksIndex?.addEventListener('click', (event) => {
+      const card = event.target.closest('[data-work-id]');
+      if (card && this.onWorkSelect) this.onWorkSelect(card.dataset.workId);
     });
 
     document.addEventListener('pointermove', (event) => {
@@ -202,7 +209,7 @@ export class UI {
     }, 160);
   }
 
-  renderUnit(unit, index, total, activeNode = null) {
+  renderUnit(unit, index, total, activeNode = null, works = []) {
     if (this.leftPage) {
       this.leftPage.innerHTML = `
         <div class="page-head">
@@ -253,6 +260,38 @@ export class UI {
           <span>${unit.id.toUpperCase()}</span>
         </div>`;
     }
+
+    this.renderWorksIndex(unit.layout === 'index' ? works : []);
+  }
+
+  renderWorksIndex(works) {
+    if (!this.worksIndex) return;
+    if (!works.length) {
+      this.worksIndex.hidden = true;
+      this.worksIndex.innerHTML = '';
+      return;
+    }
+
+    this.worksIndex.hidden = false;
+    this.worksIndex.innerHTML = `
+      <div class="works-index-head">
+        <span>WORKS INDEX</span>
+        <strong>${works.length} 件作品 · 点击卡片进入展区</strong>
+      </div>
+      <div class="works-index-grid">
+        ${works
+          .map(
+            (work) => `
+              <button class="work-card" type="button" data-work-id="${work.id}">
+                <img src="${work.image}" alt="${work.title}" loading="lazy" />
+                <span class="work-card-body">
+                  <small>${work.chapter} · ${work.nav}</small>
+                  <strong>${work.title}</strong>
+                </span>
+              </button>`
+          )
+          .join('')}
+      </div>`;
   }
 
   highlightHotspot(node) {

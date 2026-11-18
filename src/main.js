@@ -1,9 +1,19 @@
 import * as THREE from 'three';
-import { units } from './data/units.js?v=20261117n';
-import { BookScene } from './core/book.js?v=20261117n';
-import { StageScene } from './core/stage.js?v=20261117n';
-import { AmbientAudio } from './core/audio.js?v=20261117n';
-import { UI } from './ui.js?v=20261117n';
+import { units } from './data/units.js?v=20261118o';
+import { BookScene } from './core/book.js?v=20261118o';
+import { StageScene } from './core/stage.js?v=20261118o';
+import { AmbientAudio } from './core/audio.js?v=20261118o';
+import { UI } from './ui.js?v=20261118o';
+
+const worksIndexItems = units
+  .filter((unit) => !['intro', 'works', 'contact'].includes(unit.id))
+  .map((unit) => ({
+    id: unit.id,
+    title: unit.title,
+    chapter: unit.chapter,
+    nav: unit.nav,
+    image: unit.hotspots?.[0]?.image || '',
+  }));
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeInOut = (t) => t * t * (3 - 2 * t);
@@ -97,10 +107,15 @@ async function goTo(index) {
   stage.show(unit, { resetView: true });
   stage.setPresentation(0.035, -1.15, 0.52);
 
-  ui.renderUnit(unit, currentIndex, units.length);
+  ui.renderUnit(unit, currentIndex, units.length, null, worksIndexItems);
   ui.renderDirectory(units, currentIndex);
   ui.setChapter(unit, currentIndex, units.length);
-  ui.setStageHint('拖拽旋转 · 悬停查看展品 · 点击查看大图');
+  ui.hideHotspotTooltip();
+  ui.setStageHint(
+    unit.layout === 'index'
+      ? '滚动浏览全部作品 · 点击卡片进入展区'
+      : '拖拽旋转 · 悬停查看展品 · 点击查看大图'
+  );
 
   await tween(900, (t) => {
     stage.setPresentation(lerp(0.035, 1, t), lerp(-1.15, 0, t), lerp(0.52, 0, t));
@@ -196,6 +211,11 @@ function bindEvents() {
     openHotspot(hotspot);
   };
 
+  ui.onWorkSelect = (id) => {
+    const index = units.findIndex((unit) => unit.id === id);
+    if (index >= 0) goTo(index);
+  };
+
   document.querySelector('#btn-directory')?.addEventListener('click', (event) => {
     const willOpen = !ui.directory.classList.contains('is-open');
     ui.setDirectory(willOpen);
@@ -261,7 +281,7 @@ async function boot() {
     return;
   }
 
-  ui.renderUnit(units[0], 0, units.length);
+  ui.renderUnit(units[0], 0, units.length, null, worksIndexItems);
   ui.renderDirectory(units, 0);
   ui.setChapter(units[0], 0, units.length);
   ui.setStageHint('拖拽旋转 · 悬停查看展品 · 点击查看大图');
