@@ -145,6 +145,16 @@ button:focus-visible {
   color: var(--ink-soft);
 }
 
+.mobile-link {
+  padding: 5px 10px;
+  border: 1px solid rgba(93, 79, 50, 0.3);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
 .status-dot {
   width: 7px;
   height: 7px;
@@ -1316,7 +1326,8 @@ button:focus-visible {
   }
 
   .brand-text small,
-  .topbar-right {
+  #unit-label,
+  .status-dot {
     display: none;
   }
 

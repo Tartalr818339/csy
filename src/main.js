@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { units } from './data/units.js?v=20261118o';
-import { BookScene } from './core/book.js?v=20261118o';
-import { StageScene } from './core/stage.js?v=20261118o';
-import { AmbientAudio } from './core/audio.js?v=20261118o';
-import { UI } from './ui.js?v=20261118o';
+import { units } from './data/units.js?v=20261118p';
+import { BookScene } from './core/book.js?v=20261118p';
+import { StageScene } from './core/stage.js?v=20261118p';
+import { AmbientAudio } from './core/audio.js?v=20261118p';
+import { UI } from './ui.js?v=20261118p';
 
 const worksIndexItems = units
   .filter((unit) => !['intro', 'works', 'contact'].includes(unit.id))
