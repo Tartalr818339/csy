@@ -544,6 +544,257 @@ button:focus-visible {
   color: #6b5b3d;
 }
 
+.intro-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 2px;
+}
+
+.intro-panel {
+  position: relative;
+  padding: 12px 13px 11px 39px;
+  border: 1px solid rgba(93, 79, 50, 0.18);
+  border-radius: 4px;
+  background: rgba(255, 252, 242, 0.42);
+  overflow: hidden;
+  transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease,
+    background 240ms ease;
+}
+
+.intro-panel::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 5px;
+  height: 5px;
+  border-top: 1px solid var(--amber);
+  border-right: 1px solid var(--amber);
+  opacity: 0.62;
+}
+
+.intro-panel:hover {
+  transform: translateX(4px);
+  border-color: rgba(183, 106, 80, 0.58);
+  background: rgba(255, 252, 242, 0.82);
+  box-shadow: 0 9px 20px rgba(80, 62, 36, 0.13);
+}
+
+.intro-panel-no {
+  position: absolute;
+  left: 12px;
+  top: 13px;
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--terracotta);
+}
+
+.intro-panel-en {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+}
+
+.intro-panel h3 {
+  margin: 0 0 5px;
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--ink);
+}
+
+.intro-panel p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.78;
+  color: var(--ink-soft);
+}
+
+.intro-panel-facts .fact-list {
+  margin-top: 6px;
+}
+
+.intro-panel-facts .fact-row {
+  grid-template-columns: 64px 1fr;
+  padding: 5px 0;
+}
+
+.intro-panel-facts .fact-row dt,
+.intro-panel-facts .fact-row dd {
+  font-size: 10.5px;
+}
+
+.page-right.is-intro .note-block {
+  position: relative;
+  margin-bottom: 8px;
+  padding: 11px 12px 11px 30px;
+  border: 1px solid rgba(93, 79, 50, 0.16);
+  border-radius: 4px;
+  background: rgba(255, 252, 242, 0.38);
+  transition: transform 240ms ease, border-color 240ms ease, background 240ms ease;
+}
+
+.page-right.is-intro .note-block::before {
+  content: "◦";
+  position: absolute;
+  left: 11px;
+  top: 10px;
+  color: var(--terracotta);
+}
+
+.page-right.is-intro .note-block:hover {
+  transform: translateX(-3px);
+  border-color: rgba(88, 107, 85, 0.45);
+  background: rgba(255, 252, 242, 0.78);
+}
+
+.skill-panel {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(93, 79, 50, 0.22);
+  border-radius: 5px;
+  background: linear-gradient(150deg, rgba(255, 252, 242, 0.78), rgba(233, 221, 194, 0.42));
+  box-shadow: inset 0 0 24px rgba(126, 101, 61, 0.08);
+}
+
+.skill-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 9px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(93, 79, 50, 0.18);
+}
+
+.skill-panel-head span {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.skill-panel-head small {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+.skill-row {
+  margin-bottom: 11px;
+  opacity: 0.55;
+  transform: translateY(6px);
+  transition: opacity 520ms ease, transform 520ms ease;
+}
+
+.skill-row.is-filled {
+  opacity: 1;
+  transform: none;
+}
+
+.skill-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.skill-index {
+  font-family: var(--serif);
+  font-size: 9px;
+  color: var(--terracotta);
+}
+
+.skill-meta strong {
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.skill-meta small {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.skill-slider {
+  --display-level: 0%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 3px 0;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.skill-row.is-filled .skill-slider,
+.skill-slider.is-dragging {
+  --display-level: var(--level);
+}
+
+.skill-track {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(93, 79, 50, 0.16);
+}
+
+.skill-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--display-level);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--amber), var(--terracotta));
+  box-shadow: 0 0 10px rgba(183, 106, 80, 0.24);
+  transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skill-thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--display-level);
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--terracotta);
+  border-radius: 50%;
+  background: var(--paper-light);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 6px rgba(80, 62, 36, 0.22);
+  transition: left 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 180ms ease;
+}
+
+.skill-slider:hover .skill-thumb,
+.skill-slider.is-dragging .skill-thumb {
+  transform: translate(-50%, -50%) scale(1.25);
+}
+
+.skill-slider.is-dragging .skill-fill,
+.skill-slider.is-dragging .skill-thumb {
+  transition: none;
+}
+
+.skill-value {
+  min-width: 32px;
+  font-family: var(--serif);
+  font-size: 10px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.skill-hint {
+  margin: 8px 0 0;
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
 .stage-viewport {
   position: relative;
   z-index: 2;

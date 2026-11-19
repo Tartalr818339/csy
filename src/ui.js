@@ -1,4 +1,4 @@
-import { siteMeta } from './data/units.js?v=20261118p';
+import { siteMeta } from './data/units.js?v=20261119q';
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -27,6 +27,77 @@ function sectionList(sections = []) {
         </section>`
     )
     .join('');
+}
+
+function introPanelsMarkup(unit) {
+  const panels = [
+    { no: '01', en: 'ABOUT', title: '关于我', text: unit.left.lead },
+    { no: '02', en: 'FOCUS', title: '创作方向', text: unit.left.paragraphs[0] },
+    { no: '03', en: 'ARCHIVE', title: '这本作品集', text: unit.left.paragraphs[1] },
+  ];
+
+  return `
+    <div class="intro-panels">
+      ${panels
+        .map(
+          (panel) => `
+            <article class="intro-panel">
+              <span class="intro-panel-no">${panel.no}</span>
+              <span class="intro-panel-en">${panel.en}</span>
+              <h3>${panel.title}</h3>
+              <p>${panel.text}</p>
+            </article>`
+        )
+        .join('')}
+      <article class="intro-panel intro-panel-facts">
+        <span class="intro-panel-no">04</span>
+        <span class="intro-panel-en">PROFILE</span>
+        <h3>个人档案</h3>
+        ${factList(unit.left.facts)}
+      </article>
+    </div>`;
+}
+
+function skillSlidersMarkup(skills = []) {
+  return `
+    <div class="skill-panel">
+      <div class="skill-panel-head">
+        <span>能力刻度</span>
+        <small>CAPABILITY SLIDERS</small>
+      </div>
+      <div class="skill-list">
+        ${skills
+          .map(
+            (skill, index) => `
+              <div class="skill-row">
+                <div class="skill-meta">
+                  <span class="skill-index">${pad(index + 1)}</span>
+                  <strong>${skill.name}</strong>
+                  <small>${skill.note}</small>
+                </div>
+                <div
+                  class="skill-slider"
+                  role="slider"
+                  tabindex="0"
+                  data-level="${skill.level}"
+                  style="--level: ${skill.level}%"
+                  aria-label="${skill.name}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="${skill.level}"
+                >
+                  <span class="skill-track">
+                    <span class="skill-fill"></span>
+                    <span class="skill-thumb"></span>
+                  </span>
+                  <span class="skill-value">${skill.level}%</span>
+                </div>
+              </div>`
+          )
+          .join('')}
+      </div>
+      <p class="skill-hint">拖动滑块查看刻度，松手后回到设定值。</p>
+    </div>`;
 }
 
 export class UI {
@@ -70,6 +141,44 @@ export class UI {
     this.worksIndex?.addEventListener('click', (event) => {
       const card = event.target.closest('[data-work-id]');
       if (card && this.onWorkSelect) this.onWorkSelect(card.dataset.workId);
+    });
+
+    this.rightPage?.addEventListener('pointerdown', (event) => {
+      const slider = event.target.closest('.skill-slider');
+      if (!slider) return;
+      event.preventDefault();
+      const track = slider.querySelector('.skill-track');
+      const value = slider.querySelector('.skill-value');
+      const rect = track.getBoundingClientRect();
+      const original = slider.dataset.level;
+      const update = (clientX) => {
+        const percent = Math.max(
+          0,
+          Math.min(100, Math.round(((clientX - rect.left) / rect.width) * 100))
+        );
+        slider.style.setProperty('--level', `${percent}%`);
+        if (value) value.textContent = `${percent}%`;
+        slider.setAttribute('aria-valuenow', String(percent));
+      };
+
+      update(event.clientX);
+      slider.classList.add('is-dragging');
+      slider.setPointerCapture?.(event.pointerId);
+
+      const move = (moveEvent) => update(moveEvent.clientX);
+      const end = () => {
+        slider.removeEventListener('pointermove', move);
+        slider.removeEventListener('pointerup', end);
+        slider.removeEventListener('pointercancel', end);
+        slider.classList.remove('is-dragging');
+        slider.style.setProperty('--level', `${original}%`);
+        if (value) value.textContent = `${original}%`;
+        slider.setAttribute('aria-valuenow', original);
+      };
+
+      slider.addEventListener('pointermove', move);
+      slider.addEventListener('pointerup', end);
+      slider.addEventListener('pointercancel', end);
     });
 
     document.addEventListener('pointermove', (event) => {
@@ -129,6 +238,9 @@ export class UI {
       } else if (isCanvas && this.canvas?.classList.contains('is-hover-hotspot')) {
         label = '查看';
         mode = 'is-hover';
+      } else if (target.closest?.('.skill-slider')) {
+        label = '拖动';
+        mode = 'is-drag';
       } else if (target.closest?.('button, .gallery-item, a, [data-hotspot]')) {
         label = '点击';
         mode = 'is-hover';
@@ -211,19 +323,26 @@ export class UI {
 
   renderUnit(unit, index, total, activeNode = null, works = []) {
     if (this.leftPage) {
+      this.leftPage.classList.toggle('is-intro', unit.layout === 'intro');
+      const leftInner =
+        unit.layout === 'intro'
+          ? introPanelsMarkup(unit)
+          : `
+            <span class="paper-tag">${unit.tag}</span>
+            <h1 class="page-title">${unit.title}</h1>
+            <p class="page-lead">${unit.left.lead}</p>
+            <div class="body-copy">
+              ${unit.left.paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('')}
+            </div>
+            ${factList(unit.left.facts)}`;
+
       this.leftPage.innerHTML = `
         <div class="page-head">
           <span>${unit.kicker}</span>
           <span>${pad(index + 1)} / ${pad(total)}</span>
         </div>
         <div class="page-inner">
-          <span class="paper-tag">${unit.tag}</span>
-          <h1 class="page-title">${unit.title}</h1>
-          <p class="page-lead">${unit.left.lead}</p>
-          <div class="body-copy">
-            ${unit.left.paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('')}
-          </div>
-          ${factList(unit.left.facts)}
+          ${leftInner}
         </div>
         <div class="page-foot">
           <span>${siteMeta.englishName}</span>
@@ -232,6 +351,7 @@ export class UI {
     }
 
     if (this.rightPage) {
+      this.rightPage.classList.toggle('is-intro', unit.layout === 'intro');
       const gallery = (unit.hotspots || [])
         .map(
           (hotspot, hotspotIndex) => `
@@ -253,12 +373,21 @@ export class UI {
           ${rightTitle ? `<h2 class="right-title">${rightTitle}</h2>` : ''}
           ${unit.right.intro ? `<p class="right-intro">${unit.right.intro}</p>` : ''}
           ${sectionList(unit.right.sections)}
+          ${unit.skills ? skillSlidersMarkup(unit.skills) : ''}
           ${unit.right.note ? `<div class="margin-note">${unit.right.note}</div>` : ''}
         </div>
         <div class="page-foot">
           <span>PAPER BOOK ARCHIVE</span>
           <span>${unit.id.toUpperCase()}</span>
         </div>`;
+
+      if (unit.skills) {
+        requestAnimationFrame(() => {
+          this.rightPage?.querySelectorAll('.skill-row').forEach((row, rowIndex) => {
+            window.setTimeout(() => row.classList.add('is-filled'), 120 + rowIndex * 90);
+          });
+        });
+      }
     }
 
     this.renderWorksIndex(unit.layout === 'index' ? works : []);

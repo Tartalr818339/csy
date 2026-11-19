@@ -18,6 +18,13 @@ export const units = [
     tag: '个人档案',
     title: '在纸页之间，认识我',
     lead: '你好，我是陈烁羽。喜欢在艺术与技术之间，用纸艺与三维构建可踏入的叙事空间。',
+    layout: 'intro',
+    skills: [
+      { name: '纸艺装置', level: 92, note: '概念到落地' },
+      { name: '插画与视觉叙事', level: 88, note: '手绘 / 数字' },
+      { name: '交互原型', level: 82, note: 'Three.js · 原生 JS' },
+      { name: '动态视觉', level: 76, note: '节奏 / 缓动' },
+    ],
     model: `${MODEL}intro.gltf`,
     camera: { radius: 6.2, theta: 0.42, phi: 1.12, target: [0, 1.02, 0] },
     left: {
